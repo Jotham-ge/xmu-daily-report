@@ -36,6 +36,7 @@ def unix_timestamp() -> int:
 def checkin(cfg: Config, use_vpn=True) -> None:
     login_url = VPN_LOGIN_URL if use_vpn else DIRECT_LOGIN_URL
     checkin_url = VPN_CHECKIN_URL if use_vpn else DIRECT_CHECKIN_URL
+    webdriver.refresh()
     driver = webdriver.get()
     logger.info("准备工作完成")
 
@@ -82,8 +83,6 @@ def checkin(cfg: Config, use_vpn=True) -> None:
     driver.get(checkin_url)
 
     # 开始工作
-    click_given_xpath(driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
-
     job = click_mytable()
     job.add_child(
         dropdown_province("福建省"),
@@ -149,7 +148,7 @@ def main():
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
             fail(f"账号【{cfg.username}】重试10次后依然打卡失败，请排查日志",
-                 "打卡失败", cfg.email, shutdown=False)
+                 "打卡失败", cfg.email, shutdown=False, send=True)
 
 
 if __name__ == '__main__':
